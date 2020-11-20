@@ -6,4 +6,4 @@ In a terminal :
 * python3 -m venv env (if necessary : sudo apt-get install python3-venv)
 * source env/bin/activate 
  
-Projet réalisé par Laura VAlier-Brasier et Hugues Turmel 
+Projet réalisé par Laura Valier-Brasier et Hugues Turmel 
