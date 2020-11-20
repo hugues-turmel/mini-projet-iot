@@ -36,20 +36,17 @@
   </nav>
     <h2>Vous avez un compte?</h2><br>    
     <div class="login">    
-    <form id="login" method="POST" action="app_login.py">    
-        <label><b>Login 
-        </b>    
-        </label>    
-        <input type="text" name="Id_client" id="Id" placeholder="Login">    
-        <br><br>    
-        <label><b>Password     
-        </b>    
-        </label>    
-        <input type="Password" name="Pass" id="Pass" placeholder="Password">    
-        <br><br>    
-        <input type="button" onclick="location.href='home.html';" value="S'inscrire" />     
-        <br><br>    
-    </form>     
+      <form method="post">
+        <label for="username">Nom d'utilisateur</label>
+        <input name="username" id="username" required>
+        <br>
+        <br>
+        <label for="password">Mot de Passe</label>
+        <input type="password" name="password" id="password" required>
+        <br>
+        <br>
+        <input type="submit" value="Log In">
+      </form>
     <h2>Pas encore inscrit?</h2>
     <input type ="button" onclick="location.href='inscription.html';"value="Inscription"/>
 </div>    
