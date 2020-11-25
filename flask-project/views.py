@@ -6,19 +6,21 @@ from wtforms import StringField, HiddenField, SelectField
 from wtforms.validators import DataRequired
 
 class LoginForm(FlaskForm):
-    login       =   StringField(    'Title', validators=[DataRequired()])
-    password    =   StringField(  'Picture', validators=[DataRequired()])
+    login       =   StringField(     'Login', validators=[DataRequired()])
+    password    =   StringField(  'Password', validators=[DataRequired()])
 
-@app.route("/login/", methods=("GET", "POST",))
+@app.route("/login/", methods=("POST"))
 def login():
     f = LoginForm()
     if f.validate_on_submit():
         login       = str(f.login.data)
         password    = str(f.password.data)
         user = find_one(login)
-        if( password == user[0][0]):
-            return redirect(url_for('home'))
+        if(password == user[0][0]):
+            return(render_template(
+                "home.html"
+            ))
         return render_template(
             "login.html",
             form=f
-        )       
+        )

@@ -10,7 +10,6 @@ app = Flask(__name__)
 def get():
     return(render_template("login.html"))
 
-print(find_one("Laura367")[0][0])
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
