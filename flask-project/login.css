@@ -1,7 +1,8 @@
-#SAHL_COMPANY_LOGIN
+#PROJET_SF
 {
     height: 250px;
     background: #aaa;
+    margin-left: 40%;
 }
 
 form {
@@ -13,3 +14,5 @@ form {
     height: 200px;
     background: #aaa;
   }
+
+ 
