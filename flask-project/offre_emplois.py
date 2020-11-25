@@ -10,6 +10,11 @@ annonces = {
     3 : {'id':3, 'titre':'DRH',                 'entreprise':'SAP',     'categorie':'Ressources Humaines',  'date depot':'10/11/2020', 'date limite':'20/12/2020', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#drh#cdi'}
 }
 
+title = {}
+category = {}
+company = {}
+
+
 
 
 genid_annonce = 4
@@ -75,16 +80,18 @@ class Annonces(Resource):
             return(False)
 
 
-@api.route('/annonces/<int:abid>',endpoint='annonce')
-class Annonce(Resource) :
+@api.route('/annonces/<int:abid>/title',endpoint='title')
+class Titles(Resource) :
     def get(self,abid):
-        return(jsonify(annonces))
+        co=titles.get(abid,[])
+        return(jsonify(co))
+    def get(self,abid):
+        co=title.get(abid,[])
+        return(jsonify(co))
     def put(self,abid):
         title=annonces[int(abid)]
         try:
             titre=request.json['titre']
-            category=request.json['categorie']
-            entreprise=request.json['entreprise']
         except (KeyError, TypeError, ValueError):
             response=jsonify('Champs obligatoires manquants')
             response.status_code=400
@@ -94,6 +101,53 @@ class Annonce(Resource) :
             title['avere']=bool(request.json['avere']=='True')
         except (KeyError, TypeError, ValueError):
             title['avere']=False
+        response=jsonify(title)
+        response.status_code=200
+        response.headers['location'] = url_for('annonce',abid=abid)
+        return response
+
+
+@api.route('/annonces/<int:abid>/category',endpoint='category')
+class Category(Resource) :
+    def get(self,abid):
+        co=category.get(abid,[])
+        return(jsonify(co))
+    def put(self,abid):
+        category=annonces[int(abid)]
+        try:
+            categorie=request.json['categorie']
+        except (KeyError, TypeError, ValueError):
+            response=jsonify('Champs obligatoires manquants')
+            response.status_code=400
+            return response
+        category['categorie']=categorie
+        try:
+            category['avere']=bool(request.json['avere']=='True')
+        except (KeyError, TypeError, ValueError):
+            category['avere']=False
+        response=jsonify(title)
+        response.status_code=200
+        response.headers['location'] = url_for('annonce',abid=abid)
+        return response
+
+@api.route('/annonces/<int:abid>/company',endpoint='company')
+class Company(Resource) :
+    def get(self,abid):
+        co=company.get(abid,[])
+        return(jsonify(co))
+    def put(self,abid):
+        company=annonces[int(abid)]
+        try:
+            entreprise=request.json['entreprise']
+        except (KeyError, TypeError, ValueError):
+            response=jsonify('Champs obligatoires manquants')
+            response.status_code=400
+            return response
+        company['entreprise']=entreprise
+        try:
+            company['avere']=bool(request.json['avere']=='True')
+        except (KeyError, TypeError, ValueError):
+            company['avere']=False
         response=jsonify(title)
         response.status_code=200
         response.headers['location'] = url_for('annonce',abid=abid)
