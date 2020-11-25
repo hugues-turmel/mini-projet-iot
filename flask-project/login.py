@@ -38,6 +38,15 @@ def find_all_for_one(log_id):
     conn.close()
     return(result)
 
+def find_one(login):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT login,password FROM {table_name} WHERE  login = '{login}'".format(login = login, table_name = db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
 def save(login, password):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
