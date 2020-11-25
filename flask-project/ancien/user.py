@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, url_for,request,abort
-from flask_restx import Resource, Api, fields
 import sqlite3
 import os
 
