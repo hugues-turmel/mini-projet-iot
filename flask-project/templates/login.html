@@ -36,7 +36,8 @@
   </nav>
     <h2>Vous avez un compte?</h2><br>    
     <div class="login">    
-      <form method="post">
+      <form.login.data role ="form" method="POST" action = "{{ url_for('login') }}">
+      </div>
         <label for="username">Nom d'utilisateur</label>
         <input name="username" id="username" required>
         <br>
@@ -45,7 +46,7 @@
         <input type="password" name="password" id="password" required>
         <br>
         <br>
-        <input type="submit" value="Log In">
+        <input class button type="submit" value="Login">
       </form>
     <h2>Pas encore inscrit?</h2>
     <input type ="button" onclick="location.href='inscription.html';"value="Inscription"/>
