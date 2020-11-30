@@ -108,7 +108,31 @@ class Annonce(Resource):
     
     @api.doc(body=modele_delete_input) 
     def delete(self, anid):
-        return("ok")
+
+        authentication_state = False;
+
+        user = {
+            'login':        request.json['login'],
+            'password':     request.json['password'],
+        }
+
+        id = annonces[anid]['id']
+        for i in range(1,len(offreurs) + 1):
+            if(offreurs[i].get('id')  == id):
+                if(offreurs[i].get('login') == user.get('login')):
+                    if(offreurs[i].get('password') == user.get('password')):
+                        authentication_state = True
+                        break
+        
+        if(authentication_state == True):
+            annonces.pop(i)
+            reponse                     = jsonify("Ok")
+            reponse.status_code         = 200
+            return(reponse)
+        else:
+            reponse                     = jsonify("Vous n'êtes pas autorisé à supprimer cette annonce")
+            reponse.status_code         = 401
+            return(reponse)
 
 
     @api.doc(model=modele_annonce_output, body=modele_mc_annonce_input)
@@ -133,7 +157,6 @@ class Annonce(Resource):
         }
         
         id = annonces[anid]['id']
-        id = request.json['id']
         for i in range(1,len(offreurs) + 1):
             if(offreurs[i].get('id')  == id):
                 if(offreurs[i].get('login') == user.get('login')):
@@ -152,8 +175,8 @@ class Annonce(Resource):
             annonces[int(anid)]['description']  = nouvelle_annonce.get('description')
             annonces[int(anid)]['contact']      = nouvelle_annonce.get('contact')
             annonces[int(anid)]['mots clés']    = nouvelle_annonce.get('mots clés')
-            reponse                     = jsonify("ok")
-            reponse.status_code         = 201
+            reponse                     = jsonify("Ok")
+            reponse.status_code         = 200
             reponse.headers['location'] = url_for('annonces') + '/' + str(genid_annonce - 1)
             return(reponse)
         else:
@@ -171,7 +194,6 @@ class Annonce(Resource):
 def  checkEndDate():
     """ This function allows to see if all advertisements still relevant """
     t = Timer(10.0, checkEndDate)
-    t = Timer(60.0, checkEndDate)
     t.start()
     # Read and store of the current day
     current_date    = str(datetime.date.today()).split('-')
@@ -192,18 +214,17 @@ def  checkEndDate():
         # Verification
         if(year < current_year):
             annonces.pop(i)
-        if(year > current_year):
-            print("stop year annonce {}".format(i))
-        else:
+            print("remove advertisement {}".format(i))
+        if(year >= current_year):
             if(year == current_year):
                 if(month < current_month):
                     annonces.pop(i)
-                    print("stop month annonce {}".format(i))
+                    print("remove advertisement {}".format(i))
                 else:
                     if(month == current_month):
                         if(day < current_day):
                             annonces.pop(i)
-                            print("stop day annonce {}".format(i))
+                            print("remove advertisement {}".format(i))
     print("checkEndDate")
 
         
