@@ -5,9 +5,13 @@ from threading import Timer
 import time
 import json
 from collections import defaultdict
+from offreurs import createOffreursDB, find_all, find_one, save, delete, update
 
 app = Flask(__name__)
 api = Api(app)
+
+createOffreursDB("offreurs")
+
 
 annonces = {
     1 : {'id':1, 'titre':'Stage Ingénieur R&D', 'entreprise':'Orange',  'categorie':'Ingénieur',            'date depot':'28/11/2020', 'date limite':'28/11/2020', 'description':'Stage de 6 mois', 'contact':'hugues.turmel@orange.fr', 'mots clés':'#stage#ingénieur#r&d'},
@@ -16,6 +20,11 @@ annonces = {
 }
 
 offreurs = {
+    1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
+    2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
+}
+
+demandeurs = {
     1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
     2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
 }
@@ -57,6 +66,88 @@ modele_annonce_output=api.model('annonce_output',
                          'description':fields.String,
                          'contact':fields.String,
                          'mots clés':fields.String})
+
+modele_offreur_output=api.model('offreur_output',
+                        {'id':fields.Integer,
+                         'login':fields.String,
+                         'password':fields.String,
+                         'entreprise':fields.String,
+                         'contact':fields.String})
+
+modele_offreur_input=api.model('offreur_input',
+                        {'login':fields.String,
+                         'password':fields.String,
+                         'entreprise':fields.String,
+                         'contact':fields.String})
+
+@api.route('/offreurs')
+class Offreurs(Resource):
+    
+    def get(self):
+        Liste_Offreurs = find_all()
+        if(Liste_Offreurs != ""):
+            reponse                     = jsonify(Liste_Offreurs)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Erreur lors de la lecture de la table Offreurs")
+            reponse.status_code         = 404
+            return(reponse)
+    
+    @api.doc(model=modele_offreur_output, body=modele_offreur_input)
+    def post(self):
+
+        entreprise  = request.json['entreprise']
+        contact     = request.json['contact']
+        login       = request.json['login']
+        password    = request.json['password']
+
+        verification_state = self.isFull(login, password, entreprise, contact)
+
+        if(verification_state):
+            save(login, password, entreprise, contact)
+            reponse                     = jsonify("ok")
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Tout les champs ne sont pas remplis")
+            reponse.status_code         = 400
+            return(reponse)
+    
+    def isFull(self, login, password, entreprise, contact):
+        if((entreprise != "") and (contact != "") and (login != "") and (password != "")):
+            return(True)
+        else:
+            return(False)
+
+@api.route('/offreurs/<int:offid>')
+class Offreur(Resource):
+
+    def get(self, offid):
+        offreur = find_one(offid)
+        if(offreur != ""):
+            reponse                     = jsonify(offreur)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucun offreur trouvé")
+            reponse.status_code         = 404
+            return(reponse)
+
+    @api.doc(body=modele_delete_input) 
+    def delete(self, offid):
+        offreur     = find_one(offid)
+        login       = request.json['login']
+        password    = request.json['password']
+        if((offreur[0][1] == login) and (offreur[0][2] == password)):
+            delete(offid)
+            reponse                     = jsonify("ok")
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Vous n'êtes pas autorisé à supprimer ce compte")
+            reponse.status_code         = 401
+            return(reponse)
 
 @api.route('/annonces')
 class Annonces(Resource):
