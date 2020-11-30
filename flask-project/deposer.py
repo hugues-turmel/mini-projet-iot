@@ -15,7 +15,7 @@ annonces = {
     3 : {'id':1, 'titre':'DRH',                 'entreprise':'SAP',     'categorie':'Ressources Humaines',  'date depot':'10/11/2020', 'date limite':'20/12/2020', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#drh#cdi'}
 }
 
-inscrits = {
+offreurs = {
     1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
     2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
 }
@@ -124,10 +124,10 @@ class Annonce(Resource):
         }
         
         id = request.json['id']
-        for i in range(1,len(inscrits) + 1):
-            if(inscrits[i].get('id')  == id):
-                if(inscrits[i].get('login') == user.get('login')):
-                    if(inscrits[i].get('password') == user.get('password')):
+        for i in range(1,len(offreurs) + 1):
+            if(offreurs[i].get('id')  == id):
+                if(offreurs[i].get('login') == user.get('login')):
+                    if(offreurs[i].get('password') == user.get('password')):
                         authentication_state = True
                         break
         
@@ -151,20 +151,26 @@ class Annonce(Resource):
         
 
 def  checkEndDate():
+    """ This function allows to see if all advertisements still relevant """
     t = Timer(60.0, checkEndDate)
     t.start()
+    # Read and store of the current day
     current_date    = str(datetime.date.today()).split('-')
     current_year    = int(current_date[0])
     current_month   = int(current_date[1])
     current_day     = int(current_date[2])
+    # Store the "annonces" indexes in L
     L = []
     for elem in annonces:
         L.append(elem)
+    # Verification is every advertisement is up to date
     for i in L:
+        # Read and store the advertisement end date
         date    = annonces[i]['date limite'].split('/')
         year    = int(date[2])
         month   = int(date[1])
         day     = int(date[0])
+        # Verification
         if(year > current_year):
             print("stop year annonce {}".format(i))
         elif(month > current_month):
