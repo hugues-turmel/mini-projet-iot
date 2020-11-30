@@ -133,6 +133,7 @@ class Annonce(Resource):
         }
         
         id = annonces[anid]['id']
+        id = request.json['id']
         for i in range(1,len(offreurs) + 1):
             if(offreurs[i].get('id')  == id):
                 if(offreurs[i].get('login') == user.get('login')):
@@ -170,6 +171,7 @@ class Annonce(Resource):
 def  checkEndDate():
     """ This function allows to see if all advertisements still relevant """
     t = Timer(10.0, checkEndDate)
+    t = Timer(60.0, checkEndDate)
     t.start()
     # Read and store of the current day
     current_date    = str(datetime.date.today()).split('-')
@@ -190,6 +192,7 @@ def  checkEndDate():
         # Verification
         if(year < current_year):
             annonces.pop(i)
+        if(year > current_year):
             print("stop year annonce {}".format(i))
         else:
             if(year == current_year):
