@@ -15,7 +15,7 @@ annonces = {
     3 : {'id':1, 'titre':'DRH',                 'entreprise':'SAP',     'categorie':'Ressources Humaines',  'date depot':'10/11/2020', 'date limite':'20/12/2020', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#drh#cdi'}
 }
 
-inscrits = {
+offreurs = {
     1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
     2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
 }
@@ -30,6 +30,10 @@ modele_annonce_input=api.model('annonce_input',
                          'description':fields.String,
                          'contact':fields.String,
                          'mots clés':fields.String})
+
+modele_delete_input=api.model('delete_input',
+                        {'login':fields.String,
+                         'password':fields.String})
 
 modele_mc_annonce_input=api.model('annonce_input_mc',
                         {'login':fields.String,
@@ -102,6 +106,11 @@ class Annonce(Resource):
     def get(self, anid):
         return(jsonify({ 'annonce':annonces[int(anid)]}))
     
+    @api.doc(body=modele_delete_input) 
+    def delete(self, anid):
+        return("ok")
+
+
     @api.doc(model=modele_annonce_output, body=modele_mc_annonce_input)
     def put(self, anid):
         
@@ -123,11 +132,11 @@ class Annonce(Resource):
             'password':     request.json['password'],
         }
         
-        id = request.json['id']
-        for i in range(1,len(inscrits) + 1):
-            if(inscrits[i].get('id')  == id):
-                if(inscrits[i].get('login') == user.get('login')):
-                    if(inscrits[i].get('password') == user.get('password')):
+        id = annonces[anid]['id']
+        for i in range(1,len(offreurs) + 1):
+            if(offreurs[i].get('id')  == id):
+                if(offreurs[i].get('login') == user.get('login')):
+                    if(offreurs[i].get('password') == user.get('password')):
                         authentication_state = True
                         break
         
@@ -142,6 +151,14 @@ class Annonce(Resource):
             annonces[int(anid)]['description']  = nouvelle_annonce.get('description')
             annonces[int(anid)]['contact']      = nouvelle_annonce.get('contact')
             annonces[int(anid)]['mots clés']    = nouvelle_annonce.get('mots clés')
+            reponse                     = jsonify("ok")
+            reponse.status_code         = 201
+            reponse.headers['location'] = url_for('annonces') + '/' + str(genid_annonce - 1)
+            return(reponse)
+        else:
+            reponse                     = jsonify("Vous n'êtes pas autorisé à modifier cette annonce")
+            reponse.status_code         = 401
+            return(reponse)
 
     def isFull(self, Annonce):
         if((Annonce['titre'] != "") and (Annonce['entreprise'] != "") and (Annonce['categorie'] != "") and (Annonce['date depot'] != "") and (Annonce['date limite'] != "") and (Annonce['description'] != "") and (Annonce["contact"] != "")):
@@ -151,29 +168,39 @@ class Annonce(Resource):
         
 
 def  checkEndDate():
-    t = Timer(60.0, checkEndDate)
+    """ This function allows to see if all advertisements still relevant """
+    t = Timer(10.0, checkEndDate)
     t.start()
+    # Read and store of the current day
     current_date    = str(datetime.date.today()).split('-')
     current_year    = int(current_date[0])
     current_month   = int(current_date[1])
     current_day     = int(current_date[2])
+    # Store the "annonces" indexes in L
     L = []
     for elem in annonces:
         L.append(elem)
+    # Verification is every advertisement is up to date
     for i in L:
+        # Read and store the advertisement end date
         date    = annonces[i]['date limite'].split('/')
         year    = int(date[2])
         month   = int(date[1])
         day     = int(date[0])
-        if(year > current_year):
-            print("stop year annonce {}".format(i))
-        elif(month > current_month):
-            print("stop month annonce {}".format(i))
-        elif(day >= current_day):
-            print("stop day annonce {}".format(i))
-        else:
+        # Verification
+        if(year < current_year):
             annonces.pop(i)
-            print("remove annonce {}".format(i))
+            print("stop year annonce {}".format(i))
+        else:
+            if(year == current_year):
+                if(month < current_month):
+                    annonces.pop(i)
+                    print("stop month annonce {}".format(i))
+                else:
+                    if(month == current_month):
+                        if(day < current_day):
+                            annonces.pop(i)
+                            print("stop day annonce {}".format(i))
     print("checkEndDate")
 
         
