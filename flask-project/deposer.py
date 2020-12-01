@@ -88,7 +88,7 @@ modele_offreur_input=api.model('offreur_input',
 class Offreurs(Resource):
     
     def get(self):
-        Liste_Offreurs = find_all()
+        Liste_Offreurs = find_all_offreurs()
         if(Liste_Offreurs != ""):
             reponse                     = jsonify(Liste_Offreurs)
             reponse.status_code         = 201
@@ -109,7 +109,7 @@ class Offreurs(Resource):
         verification_state = self.isFull(login, password, entreprise, contact)
 
         if(verification_state):
-            save(login, password, entreprise, contact)
+            save_offreur(login, password, entreprise, contact)
             reponse                     = jsonify("ok")
             reponse.status_code         = 201
             return(reponse)
@@ -128,7 +128,7 @@ class Offreurs(Resource):
 class Offreur(Resource):
 
     def get(self, offid):
-        offreur = find_one(offid)
+        offreur = find_one_offreur(offid)
         if(offreur != ""):
             reponse                     = jsonify(offreur)
             reponse.status_code         = 201
@@ -138,13 +138,15 @@ class Offreur(Resource):
             reponse.status_code         = 404
             return(reponse)
 
-     @api.doc(model = modele_offreur_output, body = modele_mc_annonce_input) 
+    @api.doc(model = modele_offreur_output, body = modele_mc_annonce_input) 
     def put(self,offid):
-        offreur     = find_one(offid)
+        offreur     = find_one_offreur(offid)
         login       = request.json['login']
         password    = request.json['password']
+        entreprise  = request.json['entreprise']
+        contact     = request.json['contact']
         if((offreur[0][1] == login) and (offreur[0][2] == password)):
-            update(offid)
+            update_offreur(offid, login, password, entreprise, contact)
             reponse                     = jsonify("ok")
             reponse.status_code         = 201
 
@@ -156,11 +158,11 @@ class Offreur(Resource):
 
     @api.doc(body=modele_delete_input) 
     def delete(self, offid):
-        offreur     = find_one(offid)
+        offreur     = find_one_offreur(offid)
         login       = request.json['login']
         password    = request.json['password']
         if((offreur[0][1] == login) and (offreur[0][2] == password)):
-            delete(offid)
+            delete_offreur(offid)
             reponse                     = jsonify("ok")
             reponse.status_code         = 201
             return(reponse)
