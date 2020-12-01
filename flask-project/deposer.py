@@ -5,14 +5,16 @@ from threading import Timer
 import time
 import json
 from collections    import defaultdict
-from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,   save_offreur,   delete_offreur,     update_offreur
-from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie, save_categorie, delete_categorie,   update_categorie
+from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur
+from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie
+from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise
 
 app = Flask(__name__)
 api = Api(app)
 
 createOffreursDB()
 createCategoriesDB()
+createEntreprisesDB()
 
 
 annonces = {
