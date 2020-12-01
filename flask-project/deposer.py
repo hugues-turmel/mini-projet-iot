@@ -138,6 +138,22 @@ class Offreur(Resource):
             reponse.status_code         = 404
             return(reponse)
 
+     @api.doc(model = modele_offreur_output, body = modele_mc_annonce_input) 
+    def put(self,offid):
+        offreur     = find_one(offid)
+        login       = request.json['login']
+        password    = request.json['password']
+        if((offreur[0][1] == login) and (offreur[0][2] == password)):
+            update(offid)
+            reponse                     = jsonify("ok")
+            reponse.status_code         = 201
+
+            return(reponse)
+        else:
+            reponse                     = jsonify("Vous n'êtes pas autorisé à modifier ce compte")
+            reponse.status_code         = 401
+            return(reponse)
+
     @api.doc(body=modele_delete_input) 
     def delete(self, offid):
         offreur     = find_one(offid)
