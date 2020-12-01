@@ -303,6 +303,65 @@ class Annonce(Resource):
         else:
             return(False)
         
+@api.route('/annonces/categories', endpoint='categories')
+class Categories(Resource):
+    def get(self):
+        cates = find_all_categories()
+        if(cates != ""):
+            reponse                     = jsonify(cates)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune catégories répertoriée")
+            reponse.status_code         = 404
+            return(reponse)
+         
+
+
+@api.route('/annonces/<int:catid>/categorie', endpoint='categorie')
+class Categorie(Resource):
+    def get(self, catid):
+        cate = find_one_categorie(catid)
+        if(cate != ""):
+            reponse                     = jsonify(cate)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune catégorie répertoriée")
+            reponse.status_code         = 404
+            return(reponse)
+         
+
+
+@api.route('/annonces/entreprises', endpoint='entreprises')
+class Entreprises(Resource):
+    def get(self):
+        enterprises = find_all_entreprises()
+        if(enterprises != ""):
+            reponse                     = jsonify(enterprises)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune entreprises répertoriée")
+            reponse.status_code         = 404
+            return(reponse)
+
+
+@api.route('/annonces/<int:entid>/entreprise', endpoint='entreprise')
+class Entreprise(Resource):
+    def get(self, entid):
+        enterprise = find_one_entreprise(entid)
+        if(enterprise != ""):
+            reponse                     = jsonify(enterprise)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune entreprise répertoriée")
+            reponse.status_code         = 404
+            return(reponse)
+         
+
+
 
 def  checkEndDate():
     """ This function allows to see if all advertisements still relevant """
