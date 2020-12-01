@@ -4,13 +4,15 @@ import datetime
 from threading import Timer
 import time
 import json
-from collections import defaultdict
-from offreurs import createOffreursDB, find_all, find_one, save, delete, update
+from collections    import defaultdict
+from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,   save_offreur,   delete_offreur,     update_offreur
+from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie, save_categorie, delete_categorie,   update_categorie
 
 app = Flask(__name__)
 api = Api(app)
 
-createOffreursDB("offreurs")
+createOffreursDB()
+createCategoriesDB()
 
 
 annonces = {
@@ -200,7 +202,7 @@ class Annonce(Resource):
     @api.doc(body=modele_delete_input) 
     def delete(self, anid):
 
-        authentication_state = False;
+        authentication_state = False
 
         user = {
             'login':        request.json['login'],
@@ -229,7 +231,7 @@ class Annonce(Resource):
     @api.doc(model=modele_annonce_output, body=modele_mc_annonce_input)
     def put(self, anid):
         
-        authentication_state = False;
+        authentication_state = False
 
         nouvelle_annonce = {
             'titre':        request.json['titre'],

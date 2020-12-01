@@ -5,7 +5,8 @@ import os
 db_file_name = "offreurs.db"
 db_name      = "offreurs"
 
-def createOffreursDB(table_name):
+def createOffreursDB():
+    table_name = db_name
     print("Create {} DB".format(table_name))
     if os.path.exists(db_file_name):
         os.remove(db_file_name)
@@ -16,7 +17,7 @@ def createOffreursDB(table_name):
     conn.commit()
     conn.close()
 
-def find_all():
+def find_all_offreurs():
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM {table_name}".format(table_name = db_name))
@@ -26,7 +27,7 @@ def find_all():
     return(result)
 
 
-def find_one(id):
+def find_one_offreur(id):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM {table_name} WHERE  id = '{id}'".format(id = id, table_name = db_name))
@@ -35,25 +36,24 @@ def find_one(id):
     conn.close()
     return(result)
 
-def save(login, password, entreprise, contact):
+def save_offreur(login, password, entreprise, contact):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(id) FROM {table_name}".format(table_name = db_name))
     conn.commit()
     id = cursor.fetchone()[0] + 1
-    print(id)
     cursor.execute("INSERT INTO {table_name} (id, login, password, entreprise, contact) VALUES ('{id}', '{login}', '{password}', '{entreprise}', '{contact}')".format(id = id, login = login, password = password, entreprise = entreprise, contact = contact, table_name = db_name))
     conn.commit()
     conn.close()
 
-def delete(id):
+def delete_offreur(id):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM {table_name} WHERE id={id}".format(id = id, table_name = db_name))
     conn.commit()
     conn.close()
 
-def update(log_id, login, password, entreprise, contact):
+def update_offreur(log_id, login, password, entreprise, contact):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
     cursor.execute("UPDATE {table_name} SET login='{login}', password='{password}', entreprise='{entreprise}', contact='{contact}' WHERE id={id}".format(login = login, password = password, entreprise=entreprise, contact = contact, id = log_id, table_name = db_name))
