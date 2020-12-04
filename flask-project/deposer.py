@@ -138,7 +138,7 @@ class Offreur(Resource):
             reponse.status_code         = 404
             return(reponse)
 
-    @api.doc(model = modele_offreur_output, body = modele_mc_annonce_input) 
+    @api.doc(model = modele_offreur_output, body = modele_offreur_input) 
     def put(self,offid):
         offreur     = find_one_offreur(offid)
         login       = request.json['login']
