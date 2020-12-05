@@ -8,6 +8,7 @@ from collections    import defaultdict
 from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur
 from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie
 from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise
+from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,7 +16,7 @@ api = Api(app)
 createOffreursDB()
 createCategoriesDB()
 createEntreprisesDB()
-
+createTitresDB()
 
 annonces = {
     1 : {'id':1, 'titre':'Stage Ingénieur R&D', 'entreprise':'Orange',  'categorie':'Ingénieur',            'date depot':'28/11/2020', 'date limite':'28/11/2020', 'description':'Stage de 6 mois', 'contact':'hugues.turmel@orange.fr', 'mots clés':'#stage#ingénieur#r&d'},
@@ -171,6 +172,7 @@ class Offreur(Resource):
             reponse.status_code         = 401
             return(reponse)
 
+
 @api.route('/annonces')
 class Annonces(Resource):
 
@@ -315,7 +317,7 @@ class Categories(Resource):
             reponse                     = jsonify("Aucune catégories répertoriée")
             reponse.status_code         = 404
             return(reponse)
-         
+
 
 
 @api.route('/annonces/<int:catid>/categorie', endpoint='categorie')
@@ -361,7 +363,19 @@ class Entreprise(Resource):
             return(reponse)
          
 
-
+@api.route('/annonces/<int:tittid>/titre', endpoint='titre')
+class Titre(Resource):
+    def get(self, tittid):
+        titre = find_one_titre(tittid)
+        if(titre != ""):
+            reponse                     = jsonify(titre)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune offre répertorié avec ce titre")
+            reponse.status_code         = 404
+            return(reponse)
+         
 
 def  checkEndDate():
     """ This function allows to see if all advertisements still relevant """
