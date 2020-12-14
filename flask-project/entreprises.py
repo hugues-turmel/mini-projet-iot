@@ -43,7 +43,7 @@ def save_entreprise(nom):
     cursor.execute("SELECT MAX(id) FROM {table_name}".format(table_name = db_name))
     conn.commit()
     id = cursor.fetchone()[0] + 1
-    cursor.execute("INSERT INTO {table_name} (id, nom) VALUES ('{id}', '{name}')".format(id = id, nom = nom))
+    cursor.execute("INSERT INTO {table_name} (id, nom) VALUES ('{id}', '{name}')".format(id = id, name = nom,  table_name = db_name))
     conn.commit()
     conn.close()
 
@@ -61,3 +61,10 @@ def update_entreprise(id, nom):
     conn.commit()
     conn.close()
 
+def find_this_entreprise(nom):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM {table_name} WHERE nom='{nom}'".format(nom = nom, table_name = db_name))
+    id = cursor.fetchone()
+    conn.commit()
+    return(id)

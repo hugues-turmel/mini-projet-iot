@@ -60,3 +60,10 @@ def update_offreur(log_id, login, password, entreprise, contact):
     conn.commit()
     conn.close()
 
+def find_this_offreur(login, password):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM {table_name} WHERE login='{login}' AND password='{password}'".format(login = login, password = password, table_name = db_name))
+    id = cursor.fetchone()
+    conn.commit()
+    return(id)

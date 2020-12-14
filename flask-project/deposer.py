@@ -5,11 +5,11 @@ from threading import Timer
 import time
 import json
 from collections    import defaultdict
-from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur
-from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie
-from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise
+from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur,     find_this_offreur
+from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie,   find_this_categorie
+from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise,  find_this_entreprise
 from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre
-
+from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces
 app = Flask(__name__)
 api = Api(app)
 
@@ -17,6 +17,7 @@ createOffreursDB()
 createCategoriesDB()
 createEntreprisesDB()
 createTitresDB()
+createAnnoncesDB()
 
 annonces = {
     1 : {'id':1, 'titre':'Stage Ingénieur R&D', 'entreprise':'Orange',  'categorie':'Ingénieur',            'date depot':'28/11/2020', 'date limite':'28/11/2020', 'description':'Stage de 6 mois', 'contact':'hugues.turmel@orange.fr', 'mots clés':'#stage#ingénieur#r&d'},
@@ -24,10 +25,6 @@ annonces = {
     3 : {'id':1, 'titre':'DRH',                 'entreprise':'SAP',     'categorie':'Ressources Humaines',  'date depot':'10/11/2020', 'date limite':'20/12/2020', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#drh#cdi'}
 }
 
-offreurs = {
-    1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
-    2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
-}
 
 demandeurs = {
     1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
@@ -40,10 +37,12 @@ modele_annonce_input=api.model('annonce_input',
                         {'titre':fields.String,
                          'entreprise':fields.String,
                          'categorie':fields.String,
-                         'date limite':fields.String,
+                         'date_limite':fields.String,
                          'description':fields.String,
                          'contact':fields.String,
-                         'mots clés':fields.String})
+                         'mots_clés':fields.String,
+                         'login':fields.String,
+                         'password':fields.String})
 
 modele_delete_input=api.model('delete_input',
                         {'login':fields.String,
@@ -177,29 +176,59 @@ class Offreur(Resource):
 class Annonces(Resource):
 
     def get(self):
-        return(jsonify(annonces))
+        return(jsonify(find_all_annonces()))
     
     @api.doc(model=modele_annonce_output, body=modele_annonce_input)
     def post(self):
         global genid_annonce
+        off_login           = request.json['login']
+        off_password        = request.json['password']
+        titre_annonce       = request.json['titre']
+        entreprise_annonce  = request.json['entreprise']
+        categorie_annonce   = request.json['categorie']
+        date_depot_annonce  = str(datetime.date.today())
+        date_limite_annonce = request.json['date_limite']
+        description_annonce = request.json['description']
+        contact_annonce     = request.json['contact']
+        mots_cles_annonce   = request.json['mots_clés']
+        offreur_id_annonce  = 0
+        categorie_verification_state = False
 
         nouvelle_annonce = {
-            'titre':        request.json['titre'],
-            'entreprise':   request.json['entreprise'],
-            'categorie':    request.json['categorie'],
-            'date depot':   str(datetime.date.today()),
-            'date limite':  request.json['date limite'],
-            'description':  request.json['description'],
-            'contact':      request.json['contact'],
-            'mots clés':    request.json['mots clés']
+            'titre':        titre_annonce,
+            'entreprise':   entreprise_annonce,
+            'categorie':    categorie_annonce,
+            'date_depot':   date_depot_annonce,
+            'date_limite':  date_limite_annonce,
+            'description':  description_annonce,
+            'contact':      contact_annonce,
+            'mots_clés':    mots_cles_annonce
         }
-        
+
+        id_off = find_this_offreur(off_login, off_password)
+        if(id_off != None):
+            nouvelle_annonce['offreur_id']  = id_off
+            offreur_id_annonce              = id_off
+            offreur_verification_state = True
+        else:
+            offreur_verification_state = False
+
+        id_cat = find_this_categorie(categorie_annonce)
+        if(id_cat != None):
+            categorie_verification_state = True
+        else:
+            categorie_verification_state = False
+
+        id_ent = find_this_entreprise(entreprise_annonce)
+        if(id_ent == None):
+            save_entreprise(entreprise_annonce)
+
         verification_state = self.isFull(nouvelle_annonce)
 
-        if(verification_state):
+        if(verification_state & offreur_verification_state & categorie_verification_state):
             nouvelle_annonce['id']      = genid_annonce
-            annonces.update({genid_annonce : nouvelle_annonce})
             genid_annonce               = genid_annonce + 1
+            save_annonces(titre_annonce, offreur_id_annonce, id_ent, id_cat, date_depot_annonce, date_limite_annonce, description_annonce, contact_annonce, mots_cles_annonce)
             reponse                     = jsonify(nouvelle_annonce)
             reponse.status_code         = 201
             reponse.headers['location'] = url_for('annonces') + '/' + str(genid_annonce - 1)
@@ -210,7 +239,7 @@ class Annonces(Resource):
             return(reponse)
     
     def isFull(self, Annonce):
-        if((Annonce['titre'] != "") and (Annonce['entreprise'] != "") and (Annonce['categorie'] != "") and (Annonce['date depot'] != "") and (Annonce['date limite'] != "") and (Annonce['description'] != "") and (Annonce["contact"] != "")):
+        if((Annonce['titre'] != "") and (Annonce['entreprise'] != "") and (Annonce['categorie'] != "") and (Annonce['date_depot'] != "") and (Annonce['date_limite'] != "") and (Annonce['description'] != "") and (Annonce["contact"] != "")):
             return(True)
         else:
             return(False)
@@ -219,28 +248,28 @@ class Annonces(Resource):
 class Annonce(Resource):
     
     def get(self, anid):
-        return(jsonify({ 'annonce':annonces[int(anid)]}))
+        return(jsonify(find_one_annonce(anid)))
     
     @api.doc(body=modele_delete_input) 
     def delete(self, anid):
-
-        authentication_state = False
-
-        user = {
-            'login':        request.json['login'],
-            'password':     request.json['password'],
-        }
-
-        id = annonces[anid]['id']
-        for i in range(1,len(offreurs) + 1):
-            if(offreurs[i].get('id')  == id):
-                if(offreurs[i].get('login') == user.get('login')):
-                    if(offreurs[i].get('password') == user.get('password')):
-                        authentication_state = True
-                        break
+        off_login               = request.json['login']
+        off_password            = request.json['password']
+        authentication_state    = False
+        id_off_annonce          = find_one_annonce(anid)[1]
+        print(id_off_annonce)
+        id_off = find_this_offreur(off_login, off_password)[0]
+        print(id_off)
+        if(id_off != None):
+            if(id_off == id_off_annonce):
+                authentication_state = True
+            else:
+                authentication_state = False
+        else:
+            authentication_state = False
+        
         
         if(authentication_state == True):
-            annonces.pop(i)
+            delete_annonces(anid)
             reponse                     = jsonify("Ok")
             reponse.status_code         = 200
             return(reponse)

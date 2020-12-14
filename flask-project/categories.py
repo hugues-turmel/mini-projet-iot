@@ -61,3 +61,10 @@ def update_categorie(id, nom):
     conn.commit()
     conn.close()
 
+def find_this_categorie(nom):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM {table_name} WHERE nom='{nom}'".format(nom = nom, table_name = db_name))
+    id = cursor.fetchone()
+    conn.commit()
+    return(id)
