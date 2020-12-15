@@ -8,8 +8,8 @@ from collections    import defaultdict
 from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur,     find_this_offreur
 from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie,   find_this_categorie
 from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise,  find_this_entreprise
-from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre
-from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces
+from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre       
+from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces,    find_annonce_by_titre,      find_annonce_by_enteprise,      find_annonce_by_categorie
 app = Flask(__name__)
 api = Api(app)
 
@@ -283,6 +283,7 @@ class Annonce(Resource):
     def put(self, anid):
         
         authentication_state = False
+        offreurs = find_all_offreurs
 
         nouvelle_annonce = {
             'titre':        request.json['titre'],
@@ -390,12 +391,39 @@ class Entreprise(Resource):
             reponse                     = jsonify("Aucune entreprise répertoriée")
             reponse.status_code         = 404
             return(reponse)
-         
 
-@api.route('/annonces/<int:tittid>/titre', endpoint='titre')
+
+@api.route('/annonces/<string:entre>',endpoint='entrepris')
+class Entreprise(Resource):
+    def get(self, entre):
+        enterprise = find_annonce_by_enteprise(entre)
+        if(enterprise != ""):
+            reponse                     = jsonify(enterprise)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune entreprise répertoriée")
+            reponse.status_code         = 404
+            return(reponse)
+
+
+@api.route('/annonces/<int:titid>/titre', endpoint='tit')
 class Titre(Resource):
-    def get(self, tittid):
-        titre = find_one_titre(tittid)
+    def get(self, titid):
+        titre = find_one_titre(titid)
+        if(titre != ""):
+            reponse                     = jsonify(titre)
+            reponse.status_code         = 201
+            return(reponse)
+        else:
+            reponse                     = jsonify("Aucune offre répertorié avec ce titre")
+            reponse.status_code         = 404
+            return(reponse)
+
+@api.route('/annonces/<string:title>', endpoint='titre')
+class Titre(Resource):
+    def get(self, title):
+        titre = find_annonce_by_titre(title)
         if(titre != ""):
             reponse                     = jsonify(titre)
             reponse.status_code         = 201
