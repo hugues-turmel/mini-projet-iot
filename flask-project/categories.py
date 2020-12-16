@@ -37,6 +37,19 @@ def find_one_categorie(id):
     conn.close()
     return(result)
 
+
+
+
+def find_annonce_by_categorie(nom):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {table_name} WHERE  nom = '{nom}'".format(nom = nom, table_name = db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
+
 def save_categorie(nom):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()

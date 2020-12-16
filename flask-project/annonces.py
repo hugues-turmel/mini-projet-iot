@@ -34,36 +34,6 @@ def find_all_for_one_annonces(log_id):
     conn.close()
     return(result)
 
-
-def find_annonce_by_titre(titre):
-    conn = sqlite3.connect(db_file_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  titre = '{titre}'".format(titre = titre, table_name = db_name))
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return(result)
-
-
-def find_annonce_by_enteprise(entreprise):
-    conn = sqlite3.connect(db_file_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  entreprise = '{entreprise}'".format(entreprise = entreprise, table_name = db_name))
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return(result)
-
-def find_annonce_by_categorie(categorie):
-    conn = sqlite3.connect(db_file_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  categorie = '{categorie}'".format(categorie = categorie, table_name = db_name))
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return(result)
-
-
 def find_one_annonce(id):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()

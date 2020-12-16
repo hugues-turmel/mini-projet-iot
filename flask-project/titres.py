@@ -1,9 +1,12 @@
 from flask import Flask, jsonify, url_for,request,abort
 import sqlite3
 import os
+from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces
+
 
 db_file_name = "titres.db"
 db_name      = "titre"
+
 
 def createTitresDB():
     table_name = db_name
@@ -36,6 +39,17 @@ def find_one_titre(id):
     conn.commit()
     conn.close()
     return(result)
+
+
+def find_annonce_by_titre(nom):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {table_name} WHERE  nom = '{nom}'".format(nom = nom, table_name = db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
 
 def save_titre(nom):
     conn = sqlite3.connect(db_file_name)

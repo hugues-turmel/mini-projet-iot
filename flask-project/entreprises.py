@@ -13,7 +13,7 @@ def createEntreprisesDB():
     conn = sqlite3.connect(db_file_name)
     conn.execute("CREATE TABLE {table_name} (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL)".format(table_name=table_name))
     conn.execute("INSERT INTO  {table_name} (nom) VALUES ('SAP')".format(table_name=table_name))
-    conn.execute("INSERT INTO  {table_name} (nom) VALUES ('Inteva Porducts')".format(table_name=table_name))
+    conn.execute("INSERT INTO  {table_name} (nom) VALUES ('Inteva Products')".format(table_name=table_name))
     conn.execute("INSERT INTO  {table_name} (nom) VALUES ('MSL Circuits')".format(table_name=table_name))  
     conn.commit()
     conn.close()
@@ -36,6 +36,17 @@ def find_one_entreprise(id):
     conn.commit()
     conn.close()
     return(result)
+
+
+def find_annonce_by_enteprise(nom):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {table_name} WHERE  nom = '{nom}'".format(nom = nom, table_name = db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
 
 def save_entreprise(nom):
     conn = sqlite3.connect(db_file_name)
