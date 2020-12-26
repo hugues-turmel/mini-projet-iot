@@ -19,18 +19,6 @@ createEntreprisesDB()
 createTitresDB()
 createAnnoncesDB()
 
-annonces = {
-    1 : {'id':1, 'titre':'Stage Ingénieur R&D', 'entreprise':'Orange',  'categorie':'Ingénieur',            'date depot':'28/11/2020', 'date limite':'28/11/2020', 'description':'Stage de 6 mois', 'contact':'hugues.turmel@orange.fr', 'mots clés':'#stage#ingénieur#r&d'},
-    2 : {'id':2, 'titre':'Ingénieur Qualite',   'entreprise':'Renault', 'categorie':'Ingénieur',            'date depot':'20/11/2020', 'date limite':'10/01/2021', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#cdd#ingénieur#qualite'},
-    3 : {'id':1, 'titre':'DRH',                 'entreprise':'SAP',     'categorie':'Ressources Humaines',  'date depot':'10/11/2020', 'date limite':'20/12/2020', 'description':'CDI',             'contact':'hugues.turmel@orange.fr', 'mots clés':'#drh#cdi'}
-}
-
-
-demandeurs = {
-    1 : {'id':1, 'login':'Laura367', 'password':'Polytech45'},
-    2 : {'id':2, 'login':'Hugues98', 'password':'Polytech45'}
-}
-
 genid_annonce = 4
 
 modele_annonce_input=api.model('annonce_input',
@@ -282,44 +270,41 @@ class Annonce(Resource):
     @api.doc(model=modele_annonce_output, body=modele_mc_annonce_input)
     def put(self, anid):
         
-        authentication_state = False
-        offreurs = find_all_offreurs
+        annonces = find_all_annonces()
 
-        nouvelle_annonce = {
-            'titre':        request.json['titre'],
-            'entreprise':   request.json['entreprise'],
-            'categorie':    request.json['categorie'],
-            'date depot':   request.json['date depot'],
-            'date limite':  request.json['date limite'],
-            'description':  request.json['description'],
-            'contact':      request.json['contact'],
-            'mots clés':    request.json['mots clés']
-        }
-
-        user = {
-            'login':        request.json['login'],
-            'password':     request.json['password'],
-        }
+        off_login               = request.json['login']
+        off_password            = request.json['password']
+        authentication_state    = False
+        id_off_annonce          = find_one_annonce(anid)[1]
+        id = annonces[anid-1][0]
+        off = find_this_offreur(off_login, off_password)
         
-        id = annonces[anid]['id']
-        for i in range(1,len(offreurs) + 1):
-            if(offreurs[i].get('id')  == id):
-                if(offreurs[i].get('login') == user.get('login')):
-                    if(offreurs[i].get('password') == user.get('password')):
-                        authentication_state = True
-                        break
-        
-        verification_state = self.isFull(nouvelle_annonce)
+        if(off != None):
+            id_off = find_this_offreur(off_login, off_password)[0]
+            if(id_off == id_off_annonce):
+                authentication_state = True
+            else:
+                authentication_state = False
+        else:
+            authentication_state = False
 
-        if((verification_state == True) and (authentication_state == True)):
-            annonces[int(anid)]['titre']        = nouvelle_annonce.get('titre')
-            annonces[int(anid)]['entreprise']   = nouvelle_annonce.get('entreprise')
-            annonces[int(anid)]['categorie']    = nouvelle_annonce.get('categorie')
-            annonces[int(anid)]['date depot']   = nouvelle_annonce.get('date depot')
-            annonces[int(anid)]['date limite']  = nouvelle_annonce.get('date limite')
-            annonces[int(anid)]['description']  = nouvelle_annonce.get('description')
-            annonces[int(anid)]['contact']      = nouvelle_annonce.get('contact')
-            annonces[int(anid)]['mots clés']    = nouvelle_annonce.get('mots clés')
+        id_cat = find_this_categorie(request.json['categorie'])[0]
+        if(id_cat != None):
+            categorie_verification_state = True
+        else:
+            categorie_verification_state = False
+
+        if((authentication_state == True) and (categorie_verification_state==True)):
+            titre = request.json['titre']
+            entreprise = request.json['entreprise']
+            offreur_id = id_off
+            categorie = id_cat
+            date_depot = request.json['date depot']
+            date_limite = request.json['date limite']
+            description = request.json['description']
+            contact = request.json['contact']
+            mots_cles = request.json['mots clés']
+            update_annonces(id,titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles)
             reponse                     = jsonify("Ok")
             reponse.status_code         = 200
             reponse.headers['location'] = url_for('annonces') + '/' + str(genid_annonce - 1)
@@ -445,6 +430,7 @@ def  checkEndDate():
     current_day     = int(current_date[2])
     # Store the "annonces" indexes in L
     L = []
+    annonces = find_all_annonces
     for elem in annonces:
         L.append(elem)
     # Verification is every advertisement is up to date
@@ -473,6 +459,6 @@ def  checkEndDate():
         
    
 if __name__ == '__main__':
-    checkEndDate()
+    #checkEndDate()
     app.run(debug=True)
     

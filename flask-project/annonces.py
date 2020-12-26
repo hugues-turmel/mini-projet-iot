@@ -37,7 +37,7 @@ def find_all_for_one_annonces(log_id):
 def find_one_annonce(id):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  id = '{id}'".format(id = id, table_name = db_name))
+    cursor.execute("SELECT * FROM {table_name} WHERE  id={id}".format(id = id, table_name = db_name))
     result = cursor.fetchone()
     conn.commit()
     conn.close()
@@ -57,10 +57,10 @@ def delete_annonces(log_id):
     conn.commit()
     conn.close()
 
-def update_annonces(log_id, login, password):
+def update_annonces(id,titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
-    cursor.execute("UPDATE {table_name} SET login='{login}', password='{password}' WHERE log_id={id}".format(login = login, password = password, id = log_id, table_name = db_name))
+    cursor.execute("UPDATE {table_name} SET titre='{titre}', offreur_id={offreur_id}, entreprise='{entreprise}', categorie={categorie}, date_depot='{date_depot}', date_limite='{date_limite}', description='{description}', contact='{contact}', mots_cles='{mots_cles}' WHERE id={id}".format(titre = titre,offreur_id = offreur_id,entreprise = entreprise,categorie = categorie,date_depot = date_depot,date_limite = date_limite,description = description,contact = contact,mots_cles = mots_cles, table_name = db_name, id=id))
     conn.commit()
     conn.close()
 
