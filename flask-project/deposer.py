@@ -364,7 +364,7 @@ class Entreprises(Resource):
             return(reponse)
 
 
-@api.route('/annonces/<int:entid>/entreprise', endpoint='entreprise')
+"""@api.route('/annonces/<int:entid>/entreprise', endpoint='entreprise')
 class Entreprise(Resource):
     def get(self, entid):
         enterprise = find_one_entreprise(entid)
@@ -375,7 +375,7 @@ class Entreprise(Resource):
         else:
             reponse                     = jsonify("Aucune entreprise répertoriée")
             reponse.status_code         = 404
-            return(reponse)
+            return(reponse)"""
 
 
 @api.route('/annonces/<string:entre>')
@@ -430,35 +430,39 @@ def  checkEndDate():
     current_day     = int(current_date[2])
     # Store the "annonces" indexes in L
     L = []
-    annonces = find_all_annonces
+    annonces = find_all_annonces()
     for elem in annonces:
         L.append(elem)
     # Verification is every advertisement is up to date
-    for i in L:
+    for i in range(len(L)):
         # Read and store the advertisement end date
-        date    = annonces[i]['date limite'].split('/')
+        print(L[i][6])
+        date    = L[i][6].split('/')
         year    = int(date[2])
         month   = int(date[1])
         day     = int(date[0])
         # Verification
         if(year < current_year):
-            annonces.pop(i)
-            print("remove advertisement {}".format(i))
+            delete_annonces(i+1)
+            print("remove advertisement {}".format(i+1))
+            print("year")
         if(year >= current_year):
             if(year == current_year):
                 if(month < current_month):
-                    annonces.pop(i)
-                    print("remove advertisement {}".format(i))
+                    delete_annonces(i+1)
+                    print("remove advertisement {}".format(i+1))
+                    print("month")
                 else:
                     if(month == current_month):
                         if(day < current_day):
-                            annonces.pop(i)
-                            print("remove advertisement {}".format(i))
+                            delete_annonces(i+1)
+                            print("remove advertisement {}".format(i+1))
+                            print("day")
     print("checkEndDate")
 
         
    
 if __name__ == '__main__':
-    #checkEndDate()
+    checkEndDate()
     app.run(debug=True)
     
