@@ -15,6 +15,7 @@ def createEntreprisesDB():
     conn.execute("INSERT INTO  {table_name} (nom) VALUES ('SAP')".format(table_name=table_name))
     conn.execute("INSERT INTO  {table_name} (nom) VALUES ('Inteva Products')".format(table_name=table_name))
     conn.execute("INSERT INTO  {table_name} (nom) VALUES ('MSL Circuits')".format(table_name=table_name))  
+    conn.execute("INSERT INTO  {table_name} (nom) VALUES ('Rebault')".format(table_name=table_name))  
     conn.commit()
     conn.close()
 
