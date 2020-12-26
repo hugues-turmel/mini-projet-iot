@@ -6,10 +6,10 @@ import time
 import json
 from collections    import defaultdict
 from offreurs       import createOffreursDB,    find_all_offreurs,      find_one_offreur,       save_offreur,       delete_offreur,     update_offreur,     find_this_offreur
-from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie,   find_this_categorie,        find_annonce_by_categorie
-from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise,  find_this_entreprise,       find_annonce_by_enteprise
-from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre,       find_annonce_by_titre       
-from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces      
+from categories     import createCategoriesDB,  find_all_categories,    find_one_categorie,     save_categorie,     delete_categorie,   update_categorie,   find_this_categorie        
+from entreprises    import createEntreprisesDB, find_all_entreprises,   find_one_entreprise,    save_entreprise,    delete_categorie,   update_entreprise,  find_this_entreprise
+from titres         import createTitresDB,      find_all_titres,        find_one_titre,         save_titre,         delete_titre,       update_titre              
+from annonces       import createAnnoncesDB,    find_all_annonces,      find_one_annonce,       save_annonces,      delete_annonces,    update_annonces, find_annonce_by_enteprise, find_annonce_by_categorie      
 app = Flask(__name__)
 api = Api(app)
 
