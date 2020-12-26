@@ -335,12 +335,21 @@ class Categories(Resource):
 
 
 
-@api.route('/annonces/<int:catid>/categorie', endpoint='categorie')
+@api.route('/annonces/<string:catg>/categorie', endpoint='categorie')
 class Categorie(Resource):
-    def get(self, catid):
-        cate = find_one_categorie(catid)
-        if(cate != ""):
-            reponse                     = jsonify(cate)
+    def get(self, catg):
+        categorie_verification_state = False
+        category = find_this_categorie(catg)
+        print(category)
+        if (category != None):
+            categorie_verification_state = True
+            catego = find_annonce_by_categorie(catg)
+            print(catego)
+        else:
+            categorie_verification_state = False
+
+        if(categorie_verification_state == True):
+            reponse                     = jsonify(catego)
             reponse.status_code         = 201
             return(reponse)
         else:
@@ -364,26 +373,23 @@ class Entreprises(Resource):
             return(reponse)
 
 
-"""@api.route('/annonces/<int:entid>/entreprise', endpoint='entreprise')
+@api.route('/annonces/<string:entre>/entreprise', endpoint='entreprise')
 class Entreprise(Resource):
-    def get(self, entid):
-        enterprise = find_one_entreprise(entid)
-        if(enterprise != ""):
-            reponse                     = jsonify(enterprise)
-            reponse.status_code         = 201
-            return(reponse)
-        else:
-            reponse                     = jsonify("Aucune entreprise répertoriée")
-            reponse.status_code         = 404
-            return(reponse)"""
-
-
-@api.route('/annonces/<string:entre>')
-class Entreprises(Resource):
     def get(self, entre):
-        enterprise = find_annonce_by_enteprise(entre)
-        if(enterprise != ""):
-            reponse                     = jsonify(enterprise)
+        entreprise_verification_state = False
+        ent = find_this_entreprise(entre)
+       
+
+        if (ent != None):
+            entreprise_verification_state = True
+            entreprise = find_annonce_by_enteprise(entre)
+
+
+        else:
+            entreprise_verification_state = False
+
+        if(entreprise_verification_state == True):
+            reponse                     = jsonify(entreprise)
             reponse.status_code         = 201
             return(reponse)
         else:
@@ -392,31 +398,9 @@ class Entreprises(Resource):
             return(reponse)
 
 
-@api.route('/annonces/<int:titid>/titre', endpoint='tit')
-class Titre(Resource):
-    def get(self, titid):
-        titre = find_one_titre(titid)
-        if(titre != ""):
-            reponse                     = jsonify(titre)
-            reponse.status_code         = 201
-            return(reponse)
-        else:
-            reponse                     = jsonify("Aucune offre répertorié avec ce titre")
-            reponse.status_code         = 404
-            return(reponse)
 
-@api.route('/annonces/<string:title>', endpoint='titre')
-class Titre(Resource):
-    def get(self, title):
-        titre = find_annonce_by_titre(title)
-        if(titre != ""):
-            reponse                     = jsonify(titre)
-            reponse.status_code         = 201
-            return(reponse)
-        else:
-            reponse                     = jsonify("Aucune offre répertorié avec ce titre")
-            reponse.status_code         = 404
-            return(reponse)
+
+
          
 
 def  checkEndDate():

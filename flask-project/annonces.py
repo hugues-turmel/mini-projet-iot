@@ -44,6 +44,29 @@ def find_one_annonce(id):
     conn.close()
     return(result)
 
+
+def find_annonce_by_enteprise(entreprise):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {table_name} WHERE  entreprise = '{entreprise}'".format(entreprise = entreprise, table_name =  db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
+
+
+def find_annonce_by_categorie(categorie):
+    conn = sqlite3.connect(db_file_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {table_name} WHERE  categorie = '{categorie}'".format(categorie = categorie, table_name = db_name))
+    result = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return(result)
+
+
+
 def save_annonces(titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles):
     conn = sqlite3.connect(db_file_name)
     cursor = conn.cursor()
