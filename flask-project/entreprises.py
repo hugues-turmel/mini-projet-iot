@@ -39,15 +39,6 @@ def find_one_entreprise(id):
     return(result)
 
 
-def find_annonce_by_enteprise(nom):
-    conn = sqlite3.connect(db_file_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  nom = '{nom}'".format(nom = nom, table_name = db_name))
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return(result)
-
 
 def save_entreprise(nom):
     conn = sqlite3.connect(db_file_name)
