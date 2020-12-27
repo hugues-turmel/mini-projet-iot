@@ -12,7 +12,7 @@ def createAnnoncesDB():
         os.remove(db_file_name)
     conn = sqlite3.connect(db_file_name)
     conn.execute("CREATE TABLE {table_name} (id INTEGER PRIMARY KEY AUTOINCREMENT,offreur_id INTEGER NOT NULL, titre TEXT NOT NULL, entreprise TEXT NOT NULL, categorie INTEGER NOT NULL, date_depot TEXT NOT NULL, date_limite TEXT NOT NULL, description TEXT NOT NULL, contact TEXT NOT NULL, mots_cles TEXT NOT NULL, FOREIGN KEY(categorie) REFERENCES categories(id))".format(table_name=db_name))
-    conn.execute("INSERT INTO  {table_name} (titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles) VALUES ('Ingénieur Qualite',1,'Renault',1,'20/11/2020','10/01/2021','CDI','hugues.turmel@orange.fr','#ingénieur')".format(table_name=db_name))
+    conn.execute("INSERT INTO  {table_name} (titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles) VALUES ('Ingenieur',1,'Renault',1,'20/11/2020','10/01/2021','CDI','hugues.turmel@orange.fr','#ingénieur')".format(table_name=db_name))
     conn.execute("INSERT INTO  {table_name} (titre,offreur_id,entreprise,categorie,date_depot,date_limite,description,contact,mots_cles) VALUES ('Ingénieur Qualite',2,'SAP',3,'25/11/2020','25/12/2020','CDD','hugues.turmel@orange.fr','#technicien')".format(table_name=db_name))
     conn.commit()
     conn.close()

@@ -41,14 +41,6 @@ def find_one_titre(id):
     return(result)
 
 
-def find_annonce_by_titre(nom):
-    conn = sqlite3.connect(db_file_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM {table_name} WHERE  nom = '{nom}'".format(nom = nom, table_name = db_name))
-    result = cursor.fetchall()
-    conn.commit()
-    conn.close()
-    return(result)
 
 
 def save_titre(nom):
