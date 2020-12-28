@@ -76,4 +76,4 @@ Il est possible de chercher un offreur par identifiant.
 * ---- **checkEndDate** ----   
 Cette fonction permet de supprimer les annonces dont la date limite est dépassée. Cette fonction est appelée à interval régulier.  
   
-Projet réalisé par Laura Valier-Brasier et Hugues Turmel  
+Projet réalisé par **Laura Valier-Brasier** et **Hugues Turmel**  
