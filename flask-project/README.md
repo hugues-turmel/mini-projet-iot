@@ -1,5 +1,3 @@
-# Détail du répertoire
-  
 * databases : Dossier contenant l'ensemble des fichiers de créations et de manipulation des bases de données  
 * env : Dossier utile dans le cas d'une utilisation d'un env  
 * annonce.db : Base de données des annonces  
