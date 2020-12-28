@@ -13,7 +13,7 @@ Dans ce terminal :
 * python3 app.py  
 * cliquer sur le lien inscrit dans le terminal (ex : 127.0.0.1)  
   
-** Détails des fonctions **  
+## Détails des fonctions  
   
 * ---- **POST** ----   
 Permet de poster une annonces avec les paramètres titre, entreprise, catégorie, date limite de l'annonce, description, contact, mots clés, login et mot de passe  
